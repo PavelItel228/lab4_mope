@@ -322,28 +322,17 @@ while not adekvat:
                 Y_exp[3].append(r.randint(math.floor(Y_min), math.floor(Y_max)))
                 m += 1
     # Стьюдент
-    beta = [0,0,0,0,0,0,0,0]
+    beta = []
     Dispersion_B = sum(y_var) / N
     Dispersion_beta = Dispersion_B / (m * N)
     S_beta = math.sqrt(abs(Dispersion_beta))
-    beta[0] = sum([Y_row_av_arr[i] * x0_factor[i] for i in range(N)]) / N
-    beta[1] = sum([Y_row_av_arr[i] * x1_factor[i] for i in range(N)]) / N
-    beta[2] = sum([Y_row_av_arr[i] * x2_factor[i] for i in range(N)]) / N
-    beta[3] = sum([Y_row_av_arr[i] * x3_factor[i] for i in range(N)]) / N
-    beta[4] = sum([Y_row_av_arr[i] * x1x2_factor[i] for i in range(N)]) / N
-    beta[5] = sum([Y_row_av_arr[i] * x1x3_factor[i] for i in range(N)]) / N
-    beta[6] = sum([Y_row_av_arr[i] * x2x3_factor[i] for i in range(N)]) / N
-    beta[7] = sum([Y_row_av_arr[i] * x1x2x3_factor[i] for i in range(N)]) / N
+    x_factor_for_solve = [x0_factor, x1_factor, x2_factor, x3_factor, x1x2_factor, x1x3_factor, x2x3_factor, x1x2x3_factor]
+    for j in range(N):
+        beta.append(sum([Y_row_av_arr[i] * x_factor_for_solve[j][i] for i in range(N)]) / N)
 
-    t0 = abs(beta[0]) / S_beta
-    t1 = abs(beta[1]) / S_beta
-    t2 = abs(beta[2]) / S_beta
-    t3 = abs(beta[3]) / S_beta
-    t4 = abs(beta[4]) / S_beta
-    t5 = abs(beta[5]) / S_beta
-    t6 = abs(beta[6]) / S_beta
-    t7 = abs(beta[7]) / S_beta
-    t_list = [t0, t1, t2, t3, t4, t5, t6, t7]
+    t_list = []
+    for i in range(N):
+        t_list.append(abs(beta[i])/S_beta)
 
     f3 = f1 * f2
     d = 0
@@ -362,23 +351,13 @@ while not adekvat:
         else:
             print("Гіпотеза не підтверджена.\nbeta{} = {}".format(i, list_ai[i]))
             d += 1
-    y_1 = list_ai[0] + list_ai[1] * x1[0] + list_ai[2] * x2[0] + list_ai[3] * x3[0] + list_ai[4] * x1x2[0] \
-          + list_ai[5] * x1x3[0] + list_ai[6] * x2x3[0] + list_ai[7] * x1x2x3[0]
-    y_2 = list_ai[0] + list_ai[1] * x1[1] + list_ai[2] * x2[1] + list_ai[3] * x3[1] + list_ai[4] * x1x2[1] \
-          + list_ai[5] * x1x3[1] + list_ai[6] * x2x3[1] + list_ai[7] * x1x2x3[1]
-    y_3 = list_ai[0] + list_ai[1] * x1[2] + list_ai[2] * x2[2] + list_ai[3] * x3[2] + list_ai[4] * x1x2[2] \
-          + list_ai[5] * x1x3[2] + list_ai[6] * x2x3[2] + list_ai[7] * x1x2x3[2]
-    y_4 = list_ai[0] + list_ai[1] * x1[3] + list_ai[2] * x2[3] + list_ai[3] * x3[3] + list_ai[4] * x1x2[3] \
-          + list_ai[5] * x1x3[3] + list_ai[6] * x2x3[3] + list_ai[7] * x1x2x3[3]
-    y_5 = list_ai[0] + list_ai[1] * x1[4] + list_ai[2] * x2[4] + list_ai[3] * x3[4] + list_ai[4] * x1x2[4] \
-          + list_ai[5] * x1x3[4] + list_ai[6] * x2x3[4] + list_ai[7] * x1x2x3[4]
-    y_6 = list_ai[0] + list_ai[1] * x1[5] + list_ai[2] * x2[5] + list_ai[3] * x3[5] + list_ai[4] * x1x2[5] \
-          + list_ai[5] * x1x3[5] + list_ai[6] * x2x3[5] + list_ai[7] * x1x2x3[5]
-    y_7 = list_ai[0] + list_ai[1] * x1[6] + list_ai[2] * x2[6] + list_ai[3] * x3[6] + list_ai[4] * x1x2[6] \
-          + list_ai[5] * x1x3[6] + list_ai[6] * x2x3[6] + list_ai[7] * x1x2x3[6]
-    y_8 = list_ai[0] + list_ai[1] * x1[7] + list_ai[2] * x2[7] + list_ai[3] * x3[7] + list_ai[4] * x1x2[7] \
-          + list_ai[5] * x1x3[7] + list_ai[6] * x2x3[7] + list_ai[7] * x1x2x3[7]
-    Y_counted_for_Student = [y_1, y_2, y_3, y_4, y_5, y_6, y_7, y_8]
+    Y_counted_for_Student = [0,0,0,0,0,0,0,0]
+    x_arr_for_solve = [x1, x2, x3, x1x2, x1x3, x2x3, x1x2x3]
+    for i in range(len(x_arr_for_solve) + 1):
+        Y_counted_for_Student[i] += list_ai[0]
+        for j in range(len(list_ai) - 1):
+            Y_counted_for_Student[i] += list_ai[j + 1] * x_arr_for_solve[j][i]
+
     f4 = N - d
     try:
         S2ad = (m / (N - d)) * sum([(Y_counted_for_Student[i] - Y_row_av_arr[i]) ** 2 for i in range(N)])
